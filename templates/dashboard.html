@@ -7,5 +7,25 @@
 </head>
 <body>
     <h1>Expense Tracker Dashboard</h1>
+    <table class="main-table">
+        {% if expenses %}
+        <tr>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Date</th>
+        </tr>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{expense.amount}}</td>
+                <td>{{expense.category}}</td>
+                <td>{{expense.description}}</td>
+                <td>{{expense.date}}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <h3>No expenses yet. Try adding an expense!</h3>
+        {% endif %}
+    </table>
 </body>
 </html>
