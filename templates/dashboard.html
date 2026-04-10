@@ -7,25 +7,52 @@
 </head>
 <body>
     <h1>Expense Tracker Dashboard</h1>
-    <table class="main-table">
-        {% if expenses %}
-        <tr>
-            <th>Amount</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Date</th>
-        </tr>
-            {% for expense in expenses %}
+    <div class="add_task_form">
+        <form method="post", action="{{url_for('add_expense')}}">
+            <label for="amount_input">Enter the amount spent:</label>
+            <input name="amount" id="amount_input" type="number">
+            <label for="category_input">Input the category of this spending:</label>
+            <input id="category_input" name="category">
+            <label for="description_input">Input a description for this spending:</label>
+            <input id="description_input" name="description">
+            <button type="submit">Add Expense</button>
+        </form>
+    </div>
+    {% if session.get('success_message') %}
+    <p>{{ session.pop('success_message') }}</p>
+    {% endif %}
+    <div class="expense_block">
+        <table class="main-table">
+            {% if expenses %}
             <tr>
-                <td>{{expense.amount}}</td>
-                <td>{{expense.category}}</td>
-                <td>{{expense.description}}</td>
-                <td>{{expense.date}}</td>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Action</th>
             </tr>
-            {% endfor %}
-        {% else %}
-            <h3>No expenses yet. Try adding an expense!</h3>
-        {% endif %}
-    </table>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{expense.amount}}</td>
+                    <td>{{expense.category}}</td>
+                    <td>{{expense.description}}</td>
+                    <td>{{expense.date}}</td>
+                    <td>
+                        <form method="post" action="{{url_for('delete_expense', expense_id=expense.id)}}">
+                            <button class="delete_button">Delete Expense</button>
+                        </form>
+                    </td>
+                </tr>
+                
+            
+                
+                {% endfor %}
+            {% else %}
+                <h3>No expenses yet. Try adding an expense!</h3>
+            {% endif %}
+        </table>    
+        
+    </div>
+
 </body>
 </html>
