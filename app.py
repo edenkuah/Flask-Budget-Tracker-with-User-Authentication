@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
+import datetime
 
 app = Flask(__name__)
 app.secret_key = "test_secret_key"  # In production, use a secure and random secret key. 
@@ -88,10 +89,32 @@ def dashboard():
         return redirect(url_for("login"))
     else:
         conn = get_db_connection()
-        tasks = conn.execute("SELECT * FROM expenses WHERE user_id=?", (session['user_id'],)).fetchall()
+        expenses = conn.execute("SELECT * FROM expenses WHERE user_id=?", (session['user_id'],)).fetchall()
         conn.close()
-        return render_template("dashboard.html", expenses=tasks)
+        return render_template("dashboard.html", expenses=expenses)
 
+@app.route("/add", methods=["POST"])
+def add_expense():
+    amount = request.form.get("amount")
+    category = request.form.get("category")
+    description = request.form.get("description")
+    date = str(datetime.date.today())
+    if amount.strip() != "" and category.strip() != "" and description.strip() != "":
+        conn = get_db_connection()
+        conn.execute("INSERT INTO expenses (user_id, amount, category, description, date) VALUES (?, ?, ?, ?, ?)", (session['user_id'], amount, category, description, date))
+        conn.commit()
+        conn.close()
+        session['success_message'] = "Expense added successfully!"
+        
+    return redirect(url_for("dashboard"))
+
+@app.route("/delete/<int:expense_id>", methods=["POST"])
+def delete_expense(expense_id):
+    conn = get_db_connection()
+    conn.execute("DELETE FROM expenses WHERE id = ? AND user_id = ?", (expense_id, session['user_id']))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("dashboard"))
 
 
 
