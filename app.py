@@ -84,7 +84,14 @@ def login():
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    if 'user_id' not in session:
+        return redirect(url_for("login"))
+    else:
+        conn = get_db_connection()
+        tasks = conn.execute("SELECT * FROM expenses WHERE user_id=?", (session['user_id'],)).fetchall()
+        conn.close()
+        return render_template("dashboard.html", expenses=tasks)
+
 
 
 
