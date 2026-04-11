@@ -4,14 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login to budget tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" >
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <form class="form-container", method="post", action="/login">
+    <div class="login_text">
+        <h2>Login to budget tracker</h2>
+    </div>
+    <form class="form_container" method="post" action="{{ url_for('login') }}">
         <label for="username">Enter your username:</label>
-        <input id="username" name="username" required>
+        <input id="username" name="username" required placeholder="John">
         <label for="password">Enter your password: </label>
-        <input id="password" name="password" type="password" required>
+        <input id="password" name="password" type="password" required placeholder="example_password">
         <button type="submit">Confirm</button>
     </form>
+    <div class="no_account form_container">
+        <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+    </div>
+    {% if error %}
+        <p class="error_message">{{ error }}</p>
+    {% endif %}
+
+    
+    {% if success_logout_message %}
+        <p class="success_logout_message">{{ success_logout_message }}</p>
+    {% endif %}
 </body>
 </html>

@@ -6,6 +6,7 @@ import datetime
 app = Flask(__name__)
 app.secret_key = "test_secret_key"  # In production, use a secure and random secret key. 
 
+
 def get_db_connection():
     conn = sqlite3.connect("budget.db")
     # Switching from plain tuples to sqlite3.Row object.
@@ -67,31 +68,35 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     error = None
+    success_logout_message = session.pop('success_logout_message', None)  # Get and remove the success message from session
     if request.method == "POST":
         conn = get_db_connection()
         entered_username = request.form.get("username")
         entered_password = request.form.get("password")
         user = conn.execute("SELECT * FROM users where username=?", (entered_username,)).fetchone()
         if user is None:
-            error = "Username not found"
+            error = "Username not found. Please try again or sign up for a new account."
         else:
             password_is_valid = check_password_hash(user["password"], entered_password)
             if password_is_valid:
                 session['user_id'] = user['id']  # write to session
+                session['success_login_message'] = "Logged in successfully!"  # Store success message in session
                 return redirect(url_for("dashboard"))
+            
             else:
                 error = "Incorrect password. Please try again."
-    return render_template("login.html", error=error)
+    return render_template("login.html", error=error, success_logout_message=success_logout_message)
 
 @app.route("/dashboard")
 def dashboard():
+    success_login_message = session.pop('success_login_message', None)  # Remove the success message from session after displaying it once
     if 'user_id' not in session:
         return redirect(url_for("login"))
     else:
         conn = get_db_connection()
         expenses = conn.execute("SELECT * FROM expenses WHERE user_id=?", (session['user_id'],)).fetchall()
         conn.close()
-        return render_template("dashboard.html", expenses=expenses)
+        return render_template("dashboard.html", expenses=expenses, success_login_message=success_login_message)
 
 @app.route("/add", methods=["POST"])
 def add_expense():
@@ -116,7 +121,12 @@ def delete_expense(expense_id):
     conn.close()
     return redirect(url_for("dashboard"))
 
-
+@app.route("/logout")
+def logout():
+    session.clear()  # Clear the user_id from session to log out the user.
+    session.pop('user_id', None)
+    session['success_logout_message'] = "Logged out successfully!"
+    return redirect(url_for("login"))
 
 if __name__ == "__main__":
     init_db()

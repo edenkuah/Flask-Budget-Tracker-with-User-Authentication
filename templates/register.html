@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign up for the Budget Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+    <div class="register_title">
+        <h1>Sign up for the Budget Tracker</h1>
+    </div>
     <form method="post" class="sign-up-form" action="/register">
         <label for="username">Enter your username:</label>
         <input id="username" name="username" required>
@@ -13,7 +18,10 @@
         <input id="password" name="password" type="password" required>
         <label for="cfm-password">Confirm your password: </label>
         <input id="cfm-password" name="cfm-password" type="password" required>
-        <button type="submit">Confirm</button>
-     </form>
+        <button type="submit" id="register-button">Confirm</button>
+    </form>
+    <div class="have_account_form_container">
+        <p>Have an account? <a href="{{ url_for("login") }}">Log in here.</a></p>
+    </div>
 </body>
 </html>

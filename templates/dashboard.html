@@ -4,25 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" >
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 <body>
-    <h1>Expense Tracker Dashboard</h1>
-    <div class="add_task_form">
-        <form method="post", action="{{url_for('add_expense')}}">
-            <label for="amount_input">Enter the amount spent:</label>
-            <input name="amount" id="amount_input" type="number">
-            <label for="category_input">Input the category of this spending:</label>
-            <input id="category_input" name="category">
-            <label for="description_input">Input a description for this spending:</label>
-            <input id="description_input" name="description">
-            <button type="submit">Add Expense</button>
-        </form>
+    <nav class="navbar">
+        <h2 class="nav-brand">💰 Budget Tracker</h2>
+        <div class="nav-links">
+            <form action="{{ url_for('logout') }}">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </nav>
+    <div class="add_expense_card">
+        <h3>Add new expense</h3>
+        <div class="add_expense_form">
+            <form method="post", action="{{url_for('add_expense')}}">
+                <label for="amount_input">Enter the amount spent:</label>
+                <input name="amount" id="amount_input" type="number">
+                <label for="category_input">Input the category of this spending:</label>
+                <input id="category_input" name="category">
+                <label for="description_input">Input a description for this spending:</label>
+                <input id="description_input" name="description">
+                <button type="submit">Add Expense</button>
+            </form>
+        </div>
     </div>
-    {% if session.get('success_message') %}
-    <p>{{ session.pop('success_message') }}</p>
+    {% if success_login_message %}
+        <p class="success-login-dashboard-message">{{ success_login_message }}</p>
     {% endif %}
     <div class="expense_block">
-        <table class="main-table">
+        <table class="main_table">
             {% if expenses %}
             <tr>
                 <th>Amount</th>
@@ -48,7 +61,7 @@
                 
                 {% endfor %}
             {% else %}
-                <h3>No expenses yet. Try adding an expense!</h3>
+                <h3 class="No_expenses_message">No expenses yet. Try adding an expense!</h3>
             {% endif %}
         </table>    
         
