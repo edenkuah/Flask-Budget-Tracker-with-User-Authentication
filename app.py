@@ -2,9 +2,11 @@ from flask import Flask, render_template, redirect, url_for, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import datetime
+import os
 
 app = Flask(__name__)
-app.secret_key = "test_secret_key"  # In production, use a secure and random secret key. 
+
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-fallback')
 
 
 def get_db_connection():
@@ -128,6 +130,9 @@ def logout():
     session['success_logout_message'] = "Logged out successfully!"
     return redirect(url_for("login"))
 
-if __name__ == "__main__":
+with app.app_context():
     init_db()
+
+if __name__ == "__main__":
+    
     app.run(debug=True)
